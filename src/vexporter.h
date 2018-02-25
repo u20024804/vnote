@@ -77,6 +77,12 @@ private:
                       bool p_embedCssStyle,
                       const QString &p_filePath);
 
+    // Fix @p_html's resources like url("...").
+    // Copy the resource to @p_folder and fix the url string.
+    static void fixStyleResources(const QString &p_baseUrl,
+                                  const QString &p_folder,
+                                  QString &p_html);
+
     QPageLayout m_pageLayout;
 
     // Will be allocated and free for each conversion.

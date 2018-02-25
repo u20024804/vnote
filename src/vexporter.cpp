@@ -260,6 +260,11 @@ bool VExporter::exportToHTML(VWebView *p_webViewer,
                     return;
                 }
 
+                QString resFolder = QFileInfo(p_filePath).completeBaseName() + "_files";
+                resFolder = QDir(VUtils::basePathFromPath(p_filePath)).filePath(resFolder);
+
+                qDebug() << "HTML files folder" << resFolder;
+
                 QString html(m_exportHtmlTemplate);
                 if (!p_styleContent.isEmpty() && p_embedCssStyle) {
                     html.replace(HtmlHolder::c_styleHolder, p_styleContent);
@@ -288,4 +293,11 @@ bool VExporter::exportToHTML(VWebView *p_webViewer,
     }
 
     return htmlExported == 1;
+}
+
+void VExporter::fixStyleResources(const QString &p_baseUrl,
+                                  const QString &p_folder,
+                                  QString &p_html)
+{
+
 }

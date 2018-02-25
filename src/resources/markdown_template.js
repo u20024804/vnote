@@ -40,19 +40,39 @@ if (typeof VEnableImageCaption == 'undefined') {
     VEnableImageCaption = false;
 }
 
+var replaceCssUrl = function(baseUrl, match, p1, offset, str) {
+    content.setLog(baseUrl + " " + p1);
+    return "url(\"haha.svg\");";
+};
+
+var translateCssUrlToAbsolute = function(baseUrl, css) {
+    return css.replace(/\burl\(\"(.+)\"\);/g, replaceCssUrl.bind(undefined, baseUrl));
+};
+
 var styleContent = function() {
     var styles = "";
     for (var i = 0; i < document.styleSheets.length; ++i) {
         var styleSheet = document.styleSheets[i];
         if (styleSheet.cssRules) {
+            var baseUrl = null;
+            if (styleSheet.href) {
+                baseUrl = styleSheet.href.substr(0, styleSheet.href.lastIndexOf('/'));
+            }
+
             for (var j = 0; j < styleSheet.cssRules.length; ++j) {
-                styles = styles + styleSheet.cssRules[j].cssText + "\n";
+                var css = styleSheet.cssRules[j].cssText;
+                if (baseUrl) {
+                    // Try to replace the url() with absolute path.
+                    css = translateCssUrlToAbsolute(baseUrl, css);
+                }
+
+                styles = styles + css + "\n";
             }
         }
     }
 
     return styles;
-}
+};
 
 var htmlContent = function() {
     content.htmlContentCB("", styleContent(), placeholder.innerHTML);
